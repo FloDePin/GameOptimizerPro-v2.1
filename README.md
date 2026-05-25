@@ -11,8 +11,6 @@
 
 *All-in-one PC optimization tool — GPU Auto-Tuner, Windows Tweaks, BIOS Guide, Per-Game Profiles and more.*
 
-![GameOptimizerPro Screenshot](assets/screenshot.png)
-
 </div>
 
 ---
