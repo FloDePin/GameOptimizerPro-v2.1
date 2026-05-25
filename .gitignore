@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyw~
+
+# GameOptimizerPro runtime data
+logs/
+profiles/*.json
+assets/
+
+# Windows
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# Temp files
+*.tmp
+*.bak
+*.zip
