@@ -13,6 +13,7 @@ from typing import Optional
 
 from ui.widgets import *
 from core.tweaks         import ALL_TWEAKS, get_groups, Tweak, get_by_id
+from core.tweak_i18n     import tweak_desc, tweak_name
 
 
 def _make_tooltip(widget, text: str):
@@ -198,12 +199,17 @@ class OptimizerTab(tk.Frame):
     # ── Presets Section ───────────────────────────────────────────────────────
 
     def _build_presets(self, p):
+        from core.i18n import current_lang
+        _lang = current_lang()
+        _hdr_txt = ("Tweak Presets — 1-Klick Optimierung" if _lang == "de"
+                    else "Tweak Presets — 1-Click Optimisation")
+        _btn_txt = "+ Eigenes Preset" if _lang == "de" else "+ Custom Preset"
         hdr = tk.Frame(p, bg="#0d1117")
         hdr.pack(fill="x", padx=12, pady=(10, 4))
-        tk.Label(hdr, text="Tweak Presets — 1-Klick Optimierung",
+        tk.Label(hdr, text=_hdr_txt,
                  font=("Segoe UI", 10, "bold"),
                  fg="#e53935", bg="#0d1117").pack(side="left")
-        tk.Button(hdr, text="+ Eigenes Preset",
+        tk.Button(hdr, text=_btn_txt,
                   command=self._create_user_preset,
                   font=("Consolas", 8), bg="#7c3aed", fg="white",
                   relief="flat", padx=8, pady=4, cursor="hand2"
@@ -244,15 +250,20 @@ class OptimizerTab(tk.Frame):
         tk.Label(hdr, text=preset.icon, font=("Segoe UI", 14),
                  fg=preset.color, bg="#161b22").pack(side="left", padx=(0, 8))
 
+        from core.i18n import current_lang
+        from core.tweak_i18n import preset_name, preset_desc
+        _lang = current_lang()
+
         txt = tk.Frame(hdr, bg="#161b22")
         txt.pack(side="left", fill="x", expand=True)
-        tk.Label(txt, text=preset.name, font=("Segoe UI", 9, "bold"),
+        tk.Label(txt, text=preset_name(preset, _lang), font=("Segoe UI", 9, "bold"),
                  fg=preset.color, bg="#161b22", anchor="w").pack(anchor="w")
 
         n       = len(preset.tweak_ids)
         already = sum(1 for tid in preset.tweak_ids if self.runner.is_applied(tid))
         s_col   = OK if already == n else WRN if already > 0 else DIM
-        tk.Label(txt, text=f"{already}/{n} aktiv", font=FM,
+        _active_word = "aktiv" if _lang == "de" else "active"
+        tk.Label(txt, text=f"{already}/{n} {_active_word}", font=FM,
                  fg=s_col, bg="#161b22", anchor="w").pack(anchor="w")
 
         btn_f = tk.Frame(hdr, bg="#161b22")
@@ -275,7 +286,7 @@ class OptimizerTab(tk.Frame):
                       relief="flat", padx=6, pady=4, cursor="hand2"
                       ).pack(side="left", padx=2)
 
-        tk.Label(card, text=preset.desc, font=("Segoe UI", 8),
+        tk.Label(card, text=preset_desc(preset, _lang), font=("Segoe UI", 8),
                  fg="#6b7280", bg="#161b22", anchor="w",
                  justify="left", wraplength=680).pack(anchor="w", pady=(4, 0))
 
@@ -421,23 +432,28 @@ class OptimizerTab(tk.Frame):
                        ).pack(side="left", padx=(0, 0))
 
         # ? tooltip button
+        from core.i18n import current_lang
+        _lang = current_lang()
+        _t_name = tweak_name(tweak, _lang)
+        _t_desc = tweak_desc(tweak, _lang)
+
         q_btn = tk.Label(row, text="?",
                          font=("Consolas", 8), fg="#4b5563", bg=bg,
                          cursor="hand2", padx=3)
         q_btn.pack(side="left", padx=(0, 4))
-        _make_tooltip(q_btn, tweak.desc)
+        _make_tooltip(q_btn, _t_desc)
 
         # Name + desc
         txt_f = tk.Frame(row, bg=bg)
         txt_f.pack(side="left", fill="x", expand=True)
-        name_lbl = tk.Label(txt_f, text=tweak.name,
+        name_lbl = tk.Label(txt_f, text=_t_name,
                  font=("Segoe UI", 9, "bold"),
                  fg=color if (verified_state is True or (verified_state is None and is_applied))
                     else "#d1d5db",
                  bg=bg, anchor="w")
         name_lbl.pack(anchor="w")
         self._name_labels[tweak.id] = name_lbl
-        tk.Label(txt_f, text=tweak.desc,
+        tk.Label(txt_f, text=_t_desc,
                  font=("Segoe UI", 8), fg="#6b7280", bg=bg,
                  anchor="w", wraplength=580, justify="left"
                  ).pack(anchor="w")

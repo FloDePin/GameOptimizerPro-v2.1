@@ -1,12 +1,40 @@
 """
-GameOptimizerPro v2.0 — Internationalization (i18n)
+GameOptimizerPro v2.1 — Internationalization (i18n)
 DE/EN language switching. All UI strings go through t().
+Selected language is persisted to disk so it survives a restart.
 """
 
+import json
+from pathlib import Path
 from typing import Callable
+
+# Language preference is stored next to the app so it survives restarts
+_LANG_FILE = Path(__file__).resolve().parent.parent / "profiles" / "language.json"
 
 _current_lang = "en"
 _listeners: list[Callable] = []
+
+
+def _load_saved_lang() -> str:
+    """Load the saved language from disk, default to English."""
+    try:
+        if _LANG_FILE.exists():
+            data = json.loads(_LANG_FILE.read_text(encoding="utf-8"))
+            lang = data.get("lang", "en")
+            if lang in ("de", "en"):
+                return lang
+    except Exception:
+        pass
+    return "en"
+
+
+def _save_lang(lang: str):
+    """Persist the chosen language to disk."""
+    try:
+        _LANG_FILE.parent.mkdir(parents=True, exist_ok=True)
+        _LANG_FILE.write_text(json.dumps({"lang": lang}), encoding="utf-8")
+    except Exception:
+        pass
 
 STRINGS = {
     # ── App general ───────────────────────────────────────────────────────────
@@ -125,14 +153,22 @@ def current_lang() -> str:
     return _current_lang
 
 
+def init_lang():
+    """Load the saved language at startup. Call before building the UI."""
+    global _current_lang
+    _current_lang = _load_saved_lang()
+    return _current_lang
+
+
 def set_lang(lang: str):
     global _current_lang
     if lang in ("de", "en"):
         _current_lang = lang
+        _save_lang(lang)
         for cb in _listeners:
             try:
                 cb(lang)
-            except:
+            except Exception:
                 pass
 
 

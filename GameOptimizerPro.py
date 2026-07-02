@@ -28,7 +28,26 @@ from core.startup_loader import StartupLoader
 from core.game_monitor   import GameMonitor
 from core.temp_monitor   import TempMonitor
 from core.update_checker import UpdateChecker
+from core                import i18n
 from ui.main_window      import GameOptimizerWindow
+
+
+# ── Restart helper (used for language switch) ─────────────────────────────────
+
+def restart_app():
+    """
+    Restart the whole application in-place. Used when the language changes,
+    so every label is rebuilt in the new language with no leftovers.
+    """
+    try:
+        python = sys.executable
+        script = str(BASE / "GameOptimizerPro.py")
+        # Launch a fresh instance, then exit this one
+        subprocess = __import__("subprocess")
+        subprocess.Popen([python, script], cwd=str(BASE))
+    except Exception:
+        pass
+    os._exit(0)
 
 
 # ── Admin helpers ─────────────────────────────────────────────────────────────
@@ -374,6 +393,9 @@ class GameOptimizerApp:
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 def main():
+    # Load the saved language before any UI is built
+    i18n.init_lang()
+
     # Admin check — use Win32 MessageBox (no tkinter instance needed)
     if os.name == "nt" and not is_admin():
         if ask_admin_msgbox():

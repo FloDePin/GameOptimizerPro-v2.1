@@ -112,8 +112,11 @@ class GameOptimizerWindow(tk.Tk):
         self.lbl_ab   = tk.Label(ind, text="AB: ?",   font=("Consolas", 9), bg="#0d1117")
         self.lbl_time = tk.Label(ind, text="",        font=("Consolas", 9), fg="#4b5563", bg="#0d1117")
         # DE/EN language toggle button — always visible
+        # Shows the language you can switch TO, so the action is clear
+        from core.i18n import current_lang
+        _next_lang_label = "DE" if current_lang() == "en" else "EN"
         self.btn_lang = tk.Button(
-            ind, text="EN",
+            ind, text=_next_lang_label,
             command=self._toggle_lang,
             font=("Consolas", 8, "bold"),
             bg="#1c2128", fg="#00d9ff",
@@ -308,12 +311,44 @@ class GameOptimizerWindow(tk.Tk):
         threading.Thread(target=tick, daemon=True).start()
 
     def _toggle_lang(self):
-        from core.i18n import toggle
-        new = toggle()
-        self.btn_lang.config(
-            text="DE" if new == "de" else "EN",
-            fg="#f59e0b" if new == "de" else "#00d9ff"
+        """
+        Switch language and restart the app so every label is rebuilt cleanly.
+        The new language is saved to disk and loaded on the next start.
+        """
+        from core.i18n import current_lang, set_lang
+        from tkinter import messagebox
+
+        new = "de" if current_lang() == "en" else "en"
+
+        lang_name = "Deutsch" if new == "de" else "English"
+        proceed = messagebox.askyesno(
+            "Sprache wechseln / Change language",
+            f"Sprache auf {lang_name} umstellen?\n"
+            f"Die App wird dafuer kurz neu gestartet.\n\n"
+            f"Switch language to {lang_name}?\n"
+            f"The app will restart briefly.",
+            parent=self
         )
+        if not proceed:
+            return
+
+        set_lang(new)   # persists to disk
+
+        # Close cleanly, then relaunch a fresh instance
+        try:
+            self.monitor.close()
+        except Exception:
+            pass
+
+        import sys, os, subprocess
+        from pathlib import Path
+        base = Path(__file__).resolve().parent.parent
+        try:
+            subprocess.Popen([sys.executable, str(base / "GameOptimizerPro.py")],
+                             cwd=str(base))
+        except Exception:
+            pass
+        os._exit(0)
 
     def on_close(self):
         self.monitor.close()

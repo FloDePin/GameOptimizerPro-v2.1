@@ -170,7 +170,6 @@ reg delete "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\AdvertisingInfo" /v Di
         category="Windows", group="Privacy",
         ps_command='''
 reg add "HKCU\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Search" /v BingSearchEnabled /t REG_DWORD /d 0 /f
-reg add "HKCU\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Search" /v CortanaConsent /t REG_DWORD /d 0 /f
 reg add "HKCU\\\\Software\\\\Policies\\\\Microsoft\\\\Windows\\\\Explorer" /v DisableSearchBoxSuggestions /t REG_DWORD /d 1 /f
 ''',
         revert_cmd='''
