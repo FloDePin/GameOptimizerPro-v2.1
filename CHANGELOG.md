@@ -4,6 +4,19 @@ All notable changes to GameOptimizerPro are documented here.
 
 ---
 
+## [2.1] — 2026-07-02
+
+### New Tweaks
+- **Disable Power Throttling** (Gaming) — sets PowerThrottlingOff so Windows does not throttle game side-processes for power saving
+- **Process Count Reduction** (Gaming, moderate) — raises the Svchost split threshold to RAM size, bundling services into fewer processes. Requires reboot
+- **Disable Bing in Windows Search** (Privacy) — turns off Bing web integration so Start menu search stays local and loads faster
+
+### Notes
+- Reviewed several tweaks from third-party utilities and deliberately excluded the risky ones (AMD Crash Defender off, C-States off, ULPS off, modded drivers) because they reduce stability or security without meaningful gains, especially on systems that undervolt with the built-in GPU tuner
+- All three new tweaks include revert commands and registry verification checks
+
+---
+
 ## [2.0] — 2026-05-25
 
 ### 🆕 New Features
