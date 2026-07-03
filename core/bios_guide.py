@@ -1,5 +1,5 @@
 """
-GameOptimizerPro v2.0 — BIOS Guide Database
+GameOptimizerPro v2.1 — BIOS Guide Database
 Erkennt CPU/MB/GPU-Generation und gibt spezifische BIOS-Empfehlungen
 plus passende Windows Registry-Tweaks aus.
 

@@ -1,5 +1,5 @@
 """
-GameOptimizerPro v2.0 — Per-Game Profiles + Tune History Tab
+GameOptimizerPro v2.1 — Per-Game Profiles + Tune History Tab
 Two sub-sections: Game Profile Manager + Tune History
 """
 

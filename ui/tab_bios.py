@@ -1,5 +1,5 @@
 """
-GameOptimizerPro v2.0 — BIOS Guide Tab
+GameOptimizerPro v2.1 — BIOS Guide Tab
 Zeigt hardware-spezifische BIOS-Empfehlungen mit Live-Status-Erkennung.
 Grüner Kreis = bereits aktiv, Roter Kreis = noch einstellen.
 """

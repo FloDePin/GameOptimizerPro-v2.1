@@ -82,14 +82,17 @@ Get-AppxPackage -AllUsers "*Copilot*"|Remove-AppxPackage -ErrorAction SilentlyCo
         name="Remove OneDrive",
         desc="Deinstalliert OneDrive komplett inkl. Autostart. Lokale Dateien bleiben erhalten.",
         category="Windows", group="Bloatware",
-        ps_command='''
-Stop-Process -Name "OneDrive" -Force -ErrorAction SilentlyContinue
-Start-Sleep 1
-$od="$env:SYSTEMROOT\\SysWOW64\\OneDriveSetup.exe"
-if(!(Test-Path $od)){$od="$env:SYSTEMROOT\\System32\\OneDriveSetup.exe"}
-if(Test-Path $od){& $od /uninstall}
-reg delete "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run" /v OneDrive /f 2>$null
-''',
+        ps_command=(
+            r'Stop-Process -Name "OneDrive" -Force -EA SilentlyContinue; '
+            r'Start-Sleep 1; '
+            r'$od = "$env:SYSTEMROOT\SysWOW64\OneDriveSetup.exe"; '
+            r'if (-not (Test-Path $od)) { $od = "$env:SYSTEMROOT\System32\OneDriveSetup.exe" }; '
+            r'if (Test-Path $od) { Start-Process -FilePath $od -ArgumentList "/uninstall" -NoNewWindow -Wait -EA SilentlyContinue }; '
+            r'Get-AppxPackage -AllUsers "*OneDrive*" -EA SilentlyContinue | Remove-AppxPackage -EA SilentlyContinue; '
+            r'Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Name OneDrive -EA SilentlyContinue; '
+            r'Write-Output "OneDrive removal completed"; '
+            r'exit 0'
+        ),
     ),
     Tweak(
         id="remove_recall",
@@ -175,14 +178,20 @@ reg delete "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\AdvertisingInfo" /v Di
         desc="Deaktiviert die Bing-Web-Integration in der Windows-Suche. Die Startmenü-Suche bleibt lokal "
              "und lädt keine Web-Ergebnisse mehr nach. Reduziert kleine Verzögerungen beim Öffnen des Startmenüs.",
         category="Windows", group="Privacy",
-        ps_command='''
-reg add "HKCU\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Search" /v BingSearchEnabled /t REG_DWORD /d 0 /f
-reg add "HKCU\\\\Software\\\\Policies\\\\Microsoft\\\\Windows\\\\Explorer" /v DisableSearchBoxSuggestions /t REG_DWORD /d 1 /f
-''',
-        revert_cmd='''
-reg add "HKCU\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Search" /v BingSearchEnabled /t REG_DWORD /d 1 /f
-reg delete "HKCU\\\\Software\\\\Policies\\\\Microsoft\\\\Windows\\\\Explorer" /v DisableSearchBoxSuggestions /f 2>$null
-''',
+        ps_command=(
+            r'Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" '
+            r'-Name BingSearchEnabled -Value 0 -Type DWord -EA SilentlyContinue; '
+            r'$p="HKCU:\Software\Policies\Microsoft\Windows\Explorer"; '
+            r'if(-not (Test-Path $p)){New-Item -Path $p -Force -EA SilentlyContinue | Out-Null}; '
+            r'Set-ItemProperty -Path $p -Name DisableSearchBoxSuggestions -Value 1 -Type DWord -EA SilentlyContinue; '
+            r'Write-Output "Bing disabled"; exit 0'
+        ),
+        revert_cmd=(
+            r'Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" '
+            r'-Name BingSearchEnabled -Value 1 -Type DWord -EA SilentlyContinue; '
+            r'Remove-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" '
+            r'-Name DisableSearchBoxSuggestions -EA SilentlyContinue; exit 0'
+        ),
         risk="safe",
     ),
     Tweak(

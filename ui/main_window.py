@@ -1,5 +1,5 @@
 """
-GameOptimizerPro v2.0 — Main Window
+GameOptimizerPro v2.1 — Main Window
 Layout inspired by v1.0: dark bg, colored tab buttons, hardware info bar,
 compact header, status bar at bottom.
 """
@@ -26,7 +26,7 @@ from core.nvtune_tuner import AutoTuner
 from core.tweak_runner import TweakRunner
 
 APP_NAME    = "GameOptimizerPro"
-APP_VERSION = "v2.0"
+APP_VERSION = "v2.1"
 
 # Tab definitions: (key, label, color_active, color_bg)
 TAB_DEFS = [

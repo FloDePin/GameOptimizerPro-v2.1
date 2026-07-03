@@ -1,5 +1,5 @@
 """
-GameOptimizerPro v2.0 — BIOS State Detector
+GameOptimizerPro v2.1 — BIOS State Detector
 Liest den tatsächlichen System-Zustand aus um zu erkennen ob eine
 BIOS-Einstellung bereits aktiv ist.
 Gibt für jede BiosSetting-ID einen DetectResult zurück.

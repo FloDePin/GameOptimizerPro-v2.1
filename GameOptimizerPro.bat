@@ -1,48 +1,35 @@
 @echo off
-:: GameOptimizerPro v2.1 — Launcher
-:: Findet den vollen Pfad zu pythonw.exe und startet die App komplett unsichtbar.
+:: GameOptimizerPro v2.1 - Launcher
+:: Nutzt gezielt die klassische Python-Installation (nicht Store-App)
 cd /d "%~dp0"
 
-:: pythonw.exe finden. Erst PATH probieren, dann typische Speicherorte.
+:: Reihenfolge wichtig: Zuerst klassische Python-Installationen, DANN erst PATH.
+:: WindowsApps-Version (Store) wird ignoriert, weil UAC dort python.exe statt pythonw.exe startet.
 set "PYW="
-where pythonw.exe >nul 2>&1
-if %errorlevel%==0 (
-    for /f "delims=" %%i in ('where pythonw.exe') do (
-        if not defined PYW set "PYW=%%i"
-    )
-)
+if exist "C:\Python314\pythonw.exe"      set "PYW=C:\Python314\pythonw.exe"
+if not defined PYW if exist "C:\Python313\pythonw.exe"      set "PYW=C:\Python313\pythonw.exe"
+if not defined PYW if exist "C:\Python312\pythonw.exe"      set "PYW=C:\Python312\pythonw.exe"
+if not defined PYW if exist "%LOCALAPPDATA%\Programs\Python\Python314\pythonw.exe" set "PYW=%LOCALAPPDATA%\Programs\Python\Python314\pythonw.exe"
+if not defined PYW if exist "%LOCALAPPDATA%\Programs\Python\Python313\pythonw.exe" set "PYW=%LOCALAPPDATA%\Programs\Python\Python313\pythonw.exe"
 
-:: Fallback: python.exe finden und pythonw daneben suchen
+:: Letzter Fallback: PATH-Suche, aber Store-Variante ausschliessen
 if not defined PYW (
-    for /f "delims=" %%i in ('where python.exe 2^>nul') do (
-        if not defined PYW (
-            set "PYE=%%i"
-            call set "PYDIR=%%PYE:python.exe=%%"
-            if exist "!PYDIR!pythonw.exe" set "PYW=!PYDIR!pythonw.exe"
+    for /f "delims=" %%i in ('where pythonw.exe 2^>nul') do (
+        set "CANDIDATE=%%i"
+        echo %%i | findstr /I "WindowsApps" >nul
+        if errorlevel 1 (
+            if not defined PYW set "PYW=%%i"
         )
     )
 )
 
-:: Letzter Fallback: Standardpfade fuer typische Python-Installationen
 if not defined PYW (
-    if exist "%LOCALAPPDATA%\Programs\Python\Python314\pythonw.exe" set "PYW=%LOCALAPPDATA%\Programs\Python\Python314\pythonw.exe"
-    if exist "%LOCALAPPDATA%\Python\pythoncore-3.14-64\pythonw.exe"  set "PYW=%LOCALAPPDATA%\Python\pythoncore-3.14-64\pythonw.exe"
-    if exist "%LOCALAPPDATA%\Programs\Python\Python313\pythonw.exe" set "PYW=%LOCALAPPDATA%\Programs\Python\Python313\pythonw.exe"
-    if exist "%LOCALAPPDATA%\Programs\Python\Python312\pythonw.exe" set "PYW=%LOCALAPPDATA%\Programs\Python\Python312\pythonw.exe"
-)
-
-if not defined PYW (
-    echo pythonw.exe nicht gefunden. Bitte Python neu installieren mit "Add to PATH".
+    echo Keine klassische pythonw.exe gefunden.
+    echo Bitte Python von python.org installieren, nicht aus dem Microsoft Store.
     pause
     exit /b 1
 )
 
-:: VBScript mit vollem Pfad zu pythonw
-set "VBSCRIPT=%TEMP%\gop_launch_%RANDOM%.vbs"
-echo Set oShellApp = CreateObject("Shell.Application") > "%VBSCRIPT%"
-echo oShellApp.ShellExecute "%PYW%", Chr(34) ^& "%~dp0GameOptimizerPro.py" ^& Chr(34), "%~dp0", "runas", 0 >> "%VBSCRIPT%"
-
-wscript //nologo "%VBSCRIPT%"
-
-ping -n 2 127.0.0.1 >nul
-del "%VBSCRIPT%" 2>nul
+:: Starte pythonw versteckt und mit Admin-Rechten
+:: -Verb RunAs = UAC-Prompt, -WindowStyle Hidden = kein sichtbares Fenster
+powershell -NoProfile -WindowStyle Hidden -Command "Start-Process -FilePath '%PYW%' -ArgumentList '\"%~dp0GameOptimizerPro.py\"' -Verb RunAs -WindowStyle Hidden -WorkingDirectory '%~dp0'"

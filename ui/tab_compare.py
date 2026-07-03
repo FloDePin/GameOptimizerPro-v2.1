@@ -1,5 +1,5 @@
 """
-GameOptimizerPro v2.0 — Profile Comparison Tab
+GameOptimizerPro v2.1 — Profile Comparison Tab
 """
 
 import tkinter as tk

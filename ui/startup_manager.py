@@ -1,5 +1,5 @@
 """
-GameOptimizerPro v2.0 — Startup Manager
+GameOptimizerPro v2.1 — Startup Manager
 Eigenes Fenster das alle Autostart-Einträge auflistet.
 Zeigt für jeden Eintrag:
   - Name, Publisher, Pfad

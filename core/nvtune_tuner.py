@@ -1,5 +1,5 @@
 """
-GameOptimizerPro Auto-Tuner v2.0
+GameOptimizerPro Auto-Tuner v2.1
 Stage 1: Max stable core offset
 Stage 2: Min stable power limit (indirect undervolt)
 Final:   2-min verification

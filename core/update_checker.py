@@ -1,5 +1,5 @@
 """
-GameOptimizerPro v2.0 — GitHub Update Checker
+GameOptimizerPro v2.1 — GitHub Update Checker
 Prüft beim Start ob eine neue Version auf GitHub verfügbar ist.
 Non-blocking, läuft im Hintergrund-Thread.
 """
@@ -14,7 +14,7 @@ GITHUB_RELEASE  = f"https://github.com/{GITHUB_REPO}/releases/latest"
 
 
 def _parse_version(ver: str) -> tuple[int, ...]:
-    """Parse 'v2.0' or '2.0' into (2, 0)."""
+    """Parse 'v2.1' or '2.0' into (2, 0)."""
     ver = ver.lstrip("v").strip()
     try:
         return tuple(int(x) for x in ver.split("."))

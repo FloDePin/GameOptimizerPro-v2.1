@@ -1,5 +1,5 @@
 """
-GameOptimizerPro v2.0 — V/F Curve Builder
+GameOptimizerPro v2.1 — V/F Curve Builder
 Erstellt präzise Voltage-Frequency Kurven für MSI Afterburner.
 
 RTX 40xx (Ada Lovelace) V/F Curve:

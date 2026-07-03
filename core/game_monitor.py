@@ -1,5 +1,5 @@
 """
-GameOptimizerPro v2.0 — Per-Game Profile Monitor
+GameOptimizerPro v2.1 — Per-Game Profile Monitor
 Überwacht laufende Prozesse via psutil.
 Wenn ein bekanntes Spiel startet → lädt das zugewiesene GPU-Profil.
 Wenn das Spiel schließt → lädt das "default" Profil zurück.

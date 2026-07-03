@@ -1,5 +1,5 @@
 """
-GameOptimizerPro v2.0 — Tune History
+GameOptimizerPro v2.1 — Tune History
 Liest alle .log Dateien aus dem logs/ Ordner und parst die Tune-Runs.
 """
 

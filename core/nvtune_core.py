@@ -415,7 +415,7 @@ class AfterburnerController:
         try:
             os.makedirs(self.profile_dir, exist_ok=True)
             with open(path, "w", encoding="utf-8") as f:
-                f.write(f"; GameOptimizerPro v2.0 profile: {profile.name}\n")
+                f.write(f"; GameOptimizerPro v2.1 profile: {profile.name}\n")
                 f.write(f"; {profile.notes}\n")
                 for k, v in existing.items():
                     f.write(f"{k}={v}\n")

@@ -1,9 +1,9 @@
 @echo off
-title GameOptimizerPro v2.0 - Installer
+title GameOptimizerPro v2.1 - Installer
 color 0B
 echo.
 echo  ==========================================
-echo    GameOptimizerPro v2.0 - Installing Dependencies
+echo    GameOptimizerPro v2.1 - Installing Dependencies
 echo  ==========================================
 echo.
 

@@ -1,5 +1,5 @@
 """
-GameOptimizerPro v2.0 — Tweak Verifier (rewritten)
+GameOptimizerPro v2.1 — Tweak Verifier (rewritten)
 Liest tatsächlichen System-Zustand per PowerShell.
 
 Fixes:
@@ -35,9 +35,10 @@ VERIFY_MAP: dict[str, str] = {
         'if(Get-AppxPackage -AllUsers "*XboxGamingOverlay*" -EA SilentlyContinue){"0"}else{"1"}'
     ),
     "remove_teams": (
+        '$app=Get-AppxPackage -AllUsers "*MicrosoftTeams*" -EA SilentlyContinue; '
         '$reg=(Get-ItemProperty "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Communications" '
         '-Name ConfigureChatAutoInstall -EA SilentlyContinue).ConfigureChatAutoInstall; '
-        'if($reg -eq 0){"1"}else{"0"}'
+        'if($app -eq $null -or $reg -eq 0){"1"}else{"0"}'
     ),
     "remove_copilot": (
         '$v=(Get-ItemProperty "HKCU:\\Software\\Policies\\Microsoft\\Windows\\WindowsCopilot" '

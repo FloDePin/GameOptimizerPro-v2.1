@@ -1,5 +1,5 @@
 """
-GameOptimizerPro v2.0 — Optimizer Tab
+GameOptimizerPro v2.1 — Optimizer Tab
 Layout: Left sidebar with section buttons (like v1.0 tabs but as sidebar),
 Right = content area. Everything visible, no hidden sub-tabs.
 Sections: Presets | [WIN] Windows | [GAME] Gaming | [NET] Network | Verify | Export/Import
