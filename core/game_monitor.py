@@ -54,6 +54,7 @@ class GameMonitor:
         self._running    = False
         self._thread: Optional[threading.Thread] = None
         self._last_procs: set[str] = set()
+        self._apply_lock = threading.Lock()
 
         # Callbacks
         self._on_game_start: Optional[Callable] = None
@@ -193,13 +194,12 @@ class GameMonitor:
         try:
             p = self.pm.load(profile_name)
             if p:
-                threading.Thread(
-                    target=lambda: (
-                        self.ab.write_and_apply(2, p),
-                        self.cr.save_last_applied(p.to_dict()) if self.cr else None
-                    ),
-                    daemon=True
-                ).start()
+                def _do(p=p):
+                    with self._apply_lock:
+                        self.ab.write_and_apply(2, p)
+                        if self.cr:
+                            self.cr.save_last_applied(p.to_dict())
+                threading.Thread(target=_do, daemon=True).start()
         except:
             pass
 

@@ -121,7 +121,7 @@ For voltage readings and GPU overclocking:
 ### 5. Launch
 Double-click **`GameOptimizerPro.bat`**
 
-> The launcher uses VBScript to start Python invisibly and requests Administrator rights via UAC. No CMD window will appear.
+> The launcher uses a hidden PowerShell `Start-Process -Verb RunAs` call to start `pythonw.exe` invisibly and requests Administrator rights via UAC. No CMD window will appear.
 
 ---
 

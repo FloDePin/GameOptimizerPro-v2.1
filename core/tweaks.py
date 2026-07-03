@@ -477,8 +477,8 @@ reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApp
         desc="Verhindert dass Windows Prozesse zur Energieeinsparung drosselt. Nützlich bei Spielen "
              "mit mehreren Prozessen, deren Nebenprozesse sonst gedrosselt werden können.",
         category="Gaming", group="In-Game Boosts",
-        ps_command='reg add "HKLM\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Power\\\\PowerThrottling" /v PowerThrottlingOff /t REG_DWORD /d 1 /f',
-        revert_cmd='reg delete "HKLM\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Power\\\\PowerThrottling" /v PowerThrottlingOff /f 2>$null',
+        ps_command='reg add "HKLM\\SYSTEM\\CurrentControlSet\\Control\\Power\\PowerThrottling" /v PowerThrottlingOff /t REG_DWORD /d 1 /f',
+        revert_cmd='reg delete "HKLM\\SYSTEM\\CurrentControlSet\\Control\\Power\\PowerThrottling" /v PowerThrottlingOff /f 2>$null',
         risk="safe",
     ),
     Tweak(
@@ -490,9 +490,9 @@ reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApp
         requires_reboot=True,
         ps_command='''
 $ramKB = [math]::Round((Get-CimInstance Win32_PhysicalMemory | Measure-Object -Property Capacity -Sum).Sum / 1024)
-reg add "HKLM\\\\SYSTEM\\\\CurrentControlSet\\\\Control" /v SvcHostSplitThresholdInKB /t REG_DWORD /d $ramKB /f
+reg add "HKLM\\SYSTEM\\CurrentControlSet\\Control" /v SvcHostSplitThresholdInKB /t REG_DWORD /d $ramKB /f
 ''',
-        revert_cmd='reg add "HKLM\\\\SYSTEM\\\\CurrentControlSet\\\\Control" /v SvcHostSplitThresholdInKB /t REG_DWORD /d 380000 /f',
+        revert_cmd='reg add "HKLM\\SYSTEM\\CurrentControlSet\\Control" /v SvcHostSplitThresholdInKB /t REG_DWORD /d 380000 /f',
         risk="moderate",
     ),
 

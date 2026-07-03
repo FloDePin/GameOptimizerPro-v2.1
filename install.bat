@@ -12,26 +12,11 @@ if errorlevel 1 (echo [ERROR] Python not found & pause & exit /b 1)
 for /f "tokens=*" %%i in ('python --version') do echo  Python: %%i
 echo.
 
-echo [1/6] pip upgrade...
+echo [1/2] pip upgrade...
 python -m pip install --upgrade pip -q
 
-echo [2/6] nvidia-ml-py (GPU monitoring)...
-pip install nvidia-ml-py -q
-
-echo [3/6] pystray (system tray)...
-pip install pystray -q
-
-echo [4/6] Pillow (tray icon)...
-pip install Pillow -q
-
-echo [5/6] numpy (stress test)...
-pip install numpy -q
-
-echo [6/7] wmi (hardware detection)...
-pip install wmi -q
-
-echo [7/7] psutil (per-game process monitoring)...
-pip install psutil -q
+echo [2/2] Installing dependencies from requirements.txt...
+pip install -r "%~dp0requirements.txt" -q
 
 echo.
 echo  ==========================================
