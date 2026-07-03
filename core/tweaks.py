@@ -54,8 +54,15 @@ foreach($a in $apps){Get-AppxPackage -AllUsers $a|Remove-AppxPackage -ErrorActio
         desc="Entfernt Teams Consumer. Blockiert automatische Neuinstallation via Registry.",
         category="Windows", group="Bloatware",
         ps_command='''
-Get-AppxPackage -AllUsers "*MicrosoftTeams*"|Remove-AppxPackage -ErrorAction SilentlyContinue
-reg add "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Communications" /v ConfigureChatAutoInstall /t REG_DWORD /d 0 /f
+Get-AppxPackage -AllUsers "*MicrosoftTeams*" -EA SilentlyContinue | Remove-AppxPackage -EA SilentlyContinue
+Get-AppxPackage -AllUsers "*Teams*" -EA SilentlyContinue | Remove-AppxPackage -EA SilentlyContinue
+$key = "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Communications"
+try {
+    if (-not (Test-Path $key)) { New-Item -Path $key -Force -EA SilentlyContinue | Out-Null }
+    Set-ItemProperty -Path $key -Name ConfigureChatAutoInstall -Value 0 -Type DWord -EA SilentlyContinue
+} catch { }
+Write-Output "Teams removal completed"
+exit 0
 ''',
         revert_cmd='reg delete "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Communications" /v ConfigureChatAutoInstall /f 2>$null',
     ),
@@ -662,7 +669,19 @@ foreach($a in $adapters){Enable-NetAdapterRss -Name $a.Name -ErrorAction Silentl
         name="Win11: Disable Widgets",
         desc="Deaktiviert das Windows 11 Widgets-Panel. Spart RAM und reduziert Hintergrundaktivität.",
         category="Windows", group="Windows 11",
-        ps_command='reg add "HKLM\\SOFTWARE\\Policies\\Microsoft\\Dsh" /v AllowNewsAndInterests /t REG_DWORD /d 0 /f',
+        ps_command='''
+$key = "HKLM:\\\\SOFTWARE\\\\Policies\\\\Microsoft\\\\Dsh"
+try {
+    if (-not (Test-Path $key)) { New-Item -Path $key -Force -EA SilentlyContinue | Out-Null }
+    Set-ItemProperty -Path $key -Name AllowNewsAndInterests -Value 0 -Type DWord -EA SilentlyContinue
+    Write-Output "Widgets disabled"
+} catch {
+    $ukey = "HKCU:\\\\Software\\\\Policies\\\\Microsoft\\\\Dsh"
+    if (-not (Test-Path $ukey)) { New-Item -Path $ukey -Force -EA SilentlyContinue | Out-Null }
+    Set-ItemProperty -Path $ukey -Name AllowNewsAndInterests -Value 0 -Type DWord -EA SilentlyContinue
+}
+exit 0
+''',
         revert_cmd='reg delete "HKLM\\SOFTWARE\\Policies\\Microsoft\\Dsh" /v AllowNewsAndInterests /f 2>$null',
     ),
     Tweak(
@@ -766,10 +785,14 @@ powercfg -setactive $guid
         category="Audio", group="System Sounds",
         ps_command=(
             "$svcs = @('NahimicService','A-Volute','nahimicSvc');"
+            " $found = $false;"
             " foreach ($s in $svcs) {"
             " $svc = Get-Service -Name $s -EA SilentlyContinue;"
-            " if ($svc) { Stop-Service -Name $s -Force -EA SilentlyContinue;"
-            " Set-Service -Name $s -StartupType Disabled -EA SilentlyContinue } }"
+            " if ($svc) { $found = $true;"
+            " Stop-Service -Name $s -Force -EA SilentlyContinue;"
+            " Set-Service -Name $s -StartupType Disabled -EA SilentlyContinue } };"
+            " if (-not $found) { Write-Output 'Nahimic not installed - nothing to do' };"
+            " exit 0"
         ),
         revert_cmd=(
             "$svcs = @('NahimicService','A-Volute','nahimicSvc');"

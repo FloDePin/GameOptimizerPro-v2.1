@@ -1,23 +1,48 @@
 @echo off
 :: GameOptimizerPro v2.1 — Launcher
-:: Startet die App komplett unsichtbar (kein CMD, kein Konsolenfenster) mit Admin-Rechten.
-:: Nutzt pythonw.exe (fensterlose Python-Variante) statt python.exe.
+:: Findet den vollen Pfad zu pythonw.exe und startet die App komplett unsichtbar.
 cd /d "%~dp0"
 
-:: Temporaeres VBScript erstellen
+:: pythonw.exe finden. Erst PATH probieren, dann typische Speicherorte.
+set "PYW="
+where pythonw.exe >nul 2>&1
+if %errorlevel%==0 (
+    for /f "delims=" %%i in ('where pythonw.exe') do (
+        if not defined PYW set "PYW=%%i"
+    )
+)
+
+:: Fallback: python.exe finden und pythonw daneben suchen
+if not defined PYW (
+    for /f "delims=" %%i in ('where python.exe 2^>nul') do (
+        if not defined PYW (
+            set "PYE=%%i"
+            call set "PYDIR=%%PYE:python.exe=%%"
+            if exist "!PYDIR!pythonw.exe" set "PYW=!PYDIR!pythonw.exe"
+        )
+    )
+)
+
+:: Letzter Fallback: Standardpfade fuer typische Python-Installationen
+if not defined PYW (
+    if exist "%LOCALAPPDATA%\Programs\Python\Python314\pythonw.exe" set "PYW=%LOCALAPPDATA%\Programs\Python\Python314\pythonw.exe"
+    if exist "%LOCALAPPDATA%\Python\pythoncore-3.14-64\pythonw.exe"  set "PYW=%LOCALAPPDATA%\Python\pythoncore-3.14-64\pythonw.exe"
+    if exist "%LOCALAPPDATA%\Programs\Python\Python313\pythonw.exe" set "PYW=%LOCALAPPDATA%\Programs\Python\Python313\pythonw.exe"
+    if exist "%LOCALAPPDATA%\Programs\Python\Python312\pythonw.exe" set "PYW=%LOCALAPPDATA%\Programs\Python\Python312\pythonw.exe"
+)
+
+if not defined PYW (
+    echo pythonw.exe nicht gefunden. Bitte Python neu installieren mit "Add to PATH".
+    pause
+    exit /b 1
+)
+
+:: VBScript mit vollem Pfad zu pythonw
 set "VBSCRIPT=%TEMP%\gop_launch_%RANDOM%.vbs"
+echo Set oShellApp = CreateObject("Shell.Application") > "%VBSCRIPT%"
+echo oShellApp.ShellExecute "%PYW%", Chr(34) ^& "%~dp0GameOptimizerPro.py" ^& Chr(34), "%~dp0", "runas", 0 >> "%VBSCRIPT%"
 
-:: pythonw bevorzugen (kein Konsolenfenster). Faellt auf python zurueck falls nicht gefunden.
-echo Set oShell = CreateObject("WScript.Shell") > "%VBSCRIPT%"
-echo Set oFS = CreateObject("Scripting.FileSystemObject") >> "%VBSCRIPT%"
-echo pyExe = "pythonw.exe" >> "%VBSCRIPT%"
-echo Set oShellApp = CreateObject("Shell.Application") >> "%VBSCRIPT%"
-echo oShellApp.ShellExecute pyExe, Chr(34) ^& "%~dp0GameOptimizerPro.py" ^& Chr(34), "%~dp0", "runas", 0 >> "%VBSCRIPT%"
-echo WScript.Sleep 500 >> "%VBSCRIPT%"
-
-:: VBScript ueber wscript starten (erzeugt selbst kein Fenster)
 wscript //nologo "%VBSCRIPT%"
 
-:: VBScript nach kurzer Wartezeit aufraeumen
 ping -n 2 127.0.0.1 >nul
 del "%VBSCRIPT%" 2>nul

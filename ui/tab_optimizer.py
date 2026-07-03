@@ -494,9 +494,13 @@ class OptimizerTab(tk.Frame):
             expected = {tid: False for tid in all_ids}
             results  = self.verifier.verify_all(all_ids, expected)
 
-            # Store actual state for every result
+            # Store actual state only when we got a real answer
             for tid, res in results.items():
-                self._verify_states[tid] = res.actual
+                if res.error:
+                    # No usable output → leave state unknown (None)
+                    self._verify_states[tid] = None
+                else:
+                    self._verify_states[tid] = res.actual
 
             # Also sync runner state with verified truth
             for tid, res in results.items():

@@ -122,10 +122,11 @@ class TweakRunner:
                  "-WindowStyle", "Hidden",
                  "-ExecutionPolicy", "Bypass", "-Command", command],
                 capture_output=True, text=True, timeout=60,
+                encoding="utf-8", errors="replace",
                 creationflags=flags,
                 startupinfo=startupinfo,
             )
-            out = (result.stdout + result.stderr).strip()
+            out = ((result.stdout or "") + (result.stderr or "")).strip()
             return result.returncode == 0, out
         except subprocess.TimeoutExpired:
             return False, "Timeout after 60s"

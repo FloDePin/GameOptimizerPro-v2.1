@@ -375,12 +375,13 @@ class TweakVerifier:
                  "-WindowStyle", "Hidden", "-ExecutionPolicy", "Bypass",
                  "-Command", script],
                 capture_output=True, text=True,
+                encoding="utf-8", errors="replace",
                 timeout=timeout,
                 creationflags=flags,
                 startupinfo=si,
             )
             parsed: dict[str, bool] = {}
-            for line in proc.stdout.splitlines():
+            for line in (proc.stdout or "").splitlines():
                 line = line.strip()
                 if "|" not in line:
                     continue
@@ -392,14 +393,24 @@ class TweakVerifier:
                         parsed[tid_out] = (val == "1")
 
             for tid in ids:
-                actual = parsed.get(tid, False)
-                results[tid] = VerifyResult(
-                    tweak_id=tid,
-                    expected=expected.get(tid, False),
-                    actual=actual,
-                    mismatch=(expected.get(tid, False) != actual),
-                    error="" if tid in parsed else "no output"
-                )
+                if tid in parsed:
+                    actual = parsed[tid]
+                    results[tid] = VerifyResult(
+                        tweak_id=tid,
+                        expected=expected.get(tid, False),
+                        actual=actual,
+                        mismatch=(expected.get(tid, False) != actual),
+                        error=""
+                    )
+                else:
+                    # No verify output: mark as error so the UI shows amber, not grey
+                    results[tid] = VerifyResult(
+                        tweak_id=tid,
+                        expected=expected.get(tid, False),
+                        actual=False,
+                        mismatch=False,
+                        error="no output"
+                    )
         except subprocess.TimeoutExpired:
             for tid in ids:
                 results[tid] = VerifyResult(

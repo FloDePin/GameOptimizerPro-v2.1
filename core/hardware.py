@@ -137,7 +137,7 @@ def detect() -> HardwareInfo:
         try:
             result = subprocess.run(
                 ["wmic", "cpu", "get", "Name,NumberOfCores,NumberOfLogicalProcessors,MaxClockSpeed", "/format:csv"],
-                capture_output=True, text=True, timeout=5
+                capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=5
             )
             for line in result.stdout.splitlines():
                 parts = line.strip().split(",")

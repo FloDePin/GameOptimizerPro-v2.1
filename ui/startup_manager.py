@@ -325,7 +325,7 @@ $entries | ConvertTo-Json -Compress
                 ["powershell.exe", "-NoProfile", "-NonInteractive",
                  "-WindowStyle", "Hidden", "-ExecutionPolicy", "Bypass",
                  "-Command", ps_cmd],
-                capture_output=True, text=True, timeout=15,
+                capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=15,
                 creationflags=flags, startupinfo=si
             )
             raw = result.stdout.strip()

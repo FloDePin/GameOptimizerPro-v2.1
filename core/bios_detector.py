@@ -32,7 +32,7 @@ def _run_ps(cmd: str) -> str:
             ["powershell.exe", "-NoProfile", "-NonInteractive",
              "-WindowStyle", "Hidden", "-ExecutionPolicy", "Bypass",
              "-Command", cmd],
-            capture_output=True, text=True, timeout=10,
+            capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=10,
             creationflags=flags, startupinfo=si
         )
         return r.stdout.strip()
