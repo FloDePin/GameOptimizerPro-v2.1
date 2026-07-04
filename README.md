@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ GameOptimizerPro
+# ⚡ GameOptimizerPro v2.1
 
 **Windows & Gaming Optimizer v2.1 by FloDePin**
 
