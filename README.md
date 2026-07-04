@@ -2,12 +2,12 @@
 
 # ⚡ GameOptimizerPro
 
-**Windows & Gaming Optimizer v2.0 by FloDePin**
+**Windows & Gaming Optimizer v2.1 by FloDePin**
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=flat-square&logo=python)](https://python.org)
 [![Windows](https://img.shields.io/badge/Windows-10%2F11-0078D4?style=flat-square&logo=windows)](https://microsoft.com/windows)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-2.0-red?style=flat-square)](https://github.com/FloDePin/GameOptimizerPro-v2/releases)
+[![Version](https://img.shields.io/badge/Version-2.1-red?style=flat-square)](https://github.com/FloDePin/GameOptimizerPro-v2.1/releases)
 
 *All-in-one PC optimization tool — GPU Auto-Tuner, Audio Optimization, Windows Tweaks, BIOS Guide, Per-Game Profiles and more.*
 
@@ -27,15 +27,15 @@
 - GPU generation auto-detection (Pascal → Ada Lovelace, RDNA 1–3)
 
 ### 🔊 Audio Optimization
-- **System-wide audio enhancements** for gaming and productivity
-- Low-latency audio configuration
-- Automatic driver optimization
-- Audio device prioritization for gaming scenarios
-- Quality vs. performance presets
-- Real-time audio latency monitoring
+- **Low-latency audio tweaks** for gaming — disable audio enhancements, exclusive audio lock
+- **System sound optimization** — disable Nahimic service, disable Windows sound scheme
+- **Audio CPU Priority** — MMCSS Pro Audio priority maximization for distortion-free audio under load
+- **Audio Ducking Control** — prevent Discord/music from being muted by games
+- **Windows Audio Enhancement Removal** — reduces audio latency and CPU overhead
+- All audio tweaks integrated into **Windows Optimizer** for easy on/off control
 
 ### 🛠 Windows Optimizer
-- **50 Tweaks** across Windows, Gaming, Network categories
+- **50+ Tweaks** across Windows, Gaming, Network, Audio categories
 - Live status verification — reads actual Registry/Service state (not just JSON)
 - 3-state indicators: ● Green (verified active) / ◑ Amber (applied, unverified) / ○ Grey (inactive)
 - **7 built-in Presets:** Gaming, Privacy & Anti-Telemetry, Debloat, Network, Performance, Windows 11 Classic, All Safe Tweaks
@@ -99,7 +99,7 @@ Download Python 3.10+ from [python.org/downloads](https://python.org/downloads).
 ### 2. Download GameOptimizerPro
 Click **Code → Download ZIP** on this page, or clone the repo:
 ```bash
-git clone https://github.com/FloDePin/GameOptimizerPro-v2.git
+git clone https://github.com/FloDePin/GameOptimizerPro-v2.1.git
 ```
 Extract to a permanent folder, e.g. `C:\Tools\GameOptimizerPro\`
 
@@ -129,7 +129,7 @@ Double-click **`GameOptimizerPro.bat`**
 
 1. Open **[WIN] Optimizer** → click **"⟳ Check Status"** to see which tweaks are already active
 2. Apply the **🎮 Gaming Preset** for a quick all-in-one optimization
-3. Check **[AUDIO] Audio Optimizer** — configure audio settings for your use case
+3. Find **Audio tweaks** in **[WIN] Optimizer** (category: Audio) — enable low-latency audio tweaks
 4. Check **[BIOS] BIOS Guide** — it detects your hardware and shows what to change
 5. If you have Afterburner running, try the **[GPU] GPU Tuner** → Start Tune (OC+UV recommended)
 
@@ -146,12 +146,13 @@ GameOptimizerPro/
 ├── core/
 │   ├── nvtune_core.py        ← GPU monitor (NVML + MAHM), Afterburner controller
 │   ├── nvtune_tuner.py       ← Auto-tuner (Stage 1 OC, Stage 2 UV, TDR detection)
-│   ├── audio_optimizer.py    ← Audio system optimization
+│   ├── vf_curve.py           ← Voltage-frequency curve optimization
 │   ├── hardware.py           ← WMI hardware detection
-│   ├── tweaks.py             ← 50 tweaks database
+│   ├── tweaks.py             ← 50+ tweaks database (Windows, Gaming, Network, Audio)
 │   ├── tweak_runner.py       ← PowerShell executor (hidden)
 │   ├── tweak_verifier.py     ← Registry verification (100% coverage)
 │   ├── tweak_presets.py      ← 7 built-in presets
+│   ├── tweak_i18n.py         ← Multilingual tweak descriptions (EN/DE)
 │   ├── bios_guide.py         ← BIOS recommendations database
 │   ├── bios_detector.py      ← Live BIOS state detection
 │   ├── game_monitor.py       ← Per-game profile monitor (psutil)
@@ -168,8 +169,7 @@ GameOptimizerPro/
     ├── main_window.py        ← Main window, tab router
     ├── widgets.py            ← Shared widgets, colors, styles
     ├── tab_dashboard.py      ← System overview + live GPU telemetry
-    ├── tab_optimizer.py      ← Windows optimizer with sidebar
-    ├── tab_audio.py          ← Audio optimizer UI
+    ├── tab_optimizer.py      ← Windows optimizer with sidebar (includes Audio tweaks)
     ├── tab_gpu.py            ← GPU tuner UI
     ├── tab_stress.py         ← Stress test + FurMark launcher
     ├── tab_compare.py        ← Profile comparison
@@ -192,8 +192,7 @@ Thread 4      → Startup (crash check + profile load)
 Thread 5      → Menu refresh (20s interval)
 Thread 6      → Game process monitor (3s interval, psutil)
 Thread 7      → Temperature monitor (10s interval)
-Thread 8      → Audio optimization monitor
-Thread 9+     → Auto-tune stages, stress worker subprocess
+Thread 8+     → Auto-tune stages, stress worker subprocess
 ```
 
 Cross-thread communication uses `widget.after(0, callback)` — the only safe way to update tkinter from background threads.
@@ -207,7 +206,7 @@ Cross-thread communication uses `widget.after(0, callback)` — the only safe wa
 - **Registry tweaks are reversible** — "Revert All" restores defaults
 - **Crash recovery** — TDR detection automatically resets GPU to safe settings
 - **Admin rights** are requested via UAC, not baked in
-- **Audio optimizations are reversible** — all changes can be undone
+- **Audio tweaks are reversible** — all changes can be undone with "Revert"
 
 ---
 
