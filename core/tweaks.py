@@ -761,6 +761,13 @@ powercfg -setactive $guid
             " Set-ItemProperty -Path $_.PSPath"
             " -Name '{1da5d803-d492-4edd-8c23-e0c0ffee7f0e},5' -Value 0 -EA SilentlyContinue }"
         ),
+        revert_cmd=(
+            "Get-ChildItem 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\MMDevices\\Audio\\Render'"
+            " -Recurse -EA SilentlyContinue | Where-Object {$_.Name -like '*Properties*'} |"
+            " ForEach-Object {"
+            " Set-ItemProperty -Path $_.PSPath"
+            " -Name '{1da5d803-d492-4edd-8c23-e0c0ffee7f0e},5' -Value 1 -EA SilentlyContinue }"
+        ),
         risk="safe",
     ),
 
@@ -776,6 +783,14 @@ powercfg -setactive $guid
             " if (Test-Path $props) {"
             " Set-ItemProperty -Path $props -Name '{b3f8fa53-0004-438e-9003-51a46e139bfc},3' -Value 0 -EA SilentlyContinue;"
             " Set-ItemProperty -Path $props -Name '{b3f8fa53-0004-438e-9003-51a46e139bfc},4' -Value 0 -EA SilentlyContinue } }"
+        ),
+        revert_cmd=(
+            "Get-ChildItem 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\MMDevices\\Audio\\Render'"
+            " -EA SilentlyContinue | ForEach-Object {"
+            " $props = Join-Path $_.PSPath 'Properties';"
+            " if (Test-Path $props) {"
+            " Set-ItemProperty -Path $props -Name '{b3f8fa53-0004-438e-9003-51a46e139bfc},3' -Value 1 -EA SilentlyContinue;"
+            " Set-ItemProperty -Path $props -Name '{b3f8fa53-0004-438e-9003-51a46e139bfc},4' -Value 1 -EA SilentlyContinue } }"
         ),
         risk="safe",
     ),

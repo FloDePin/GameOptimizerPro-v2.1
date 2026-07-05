@@ -140,7 +140,7 @@ Double-click **`GameOptimizerPro.bat`**
 ```
 GameOptimizerPro/
 ├── GameOptimizerPro.py       ← Main entry point
-├── GameOptimizerPro.bat      ← Launcher (VBScript, hidden, UAC)
+├── GameOptimizerPro.bat      ← Launcher (PowerShell Start-Process, hidden, UAC)
 ├── install.bat               ← Dependency installer
 ├── _stress_worker.py         ← GPU stress test subprocess
 ├── core/

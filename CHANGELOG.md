@@ -4,6 +4,18 @@ All notable changes to GameOptimizerPro are documented here.
 
 ---
 
+## [2.1.1] — 2026-07-05
+
+### 🐛 Bug Fixes
+- **Launcher window silently starting hidden** — `GameOptimizerPro.bat` passed an extra `-WindowStyle Hidden` to the inner `Start-Process` call launching `pythonw.exe`. Since `pythonw.exe` has no console to hide, that flag instead hid the first window the process created (the Tkinter main window) with no way to bring it back except killing the process
+- **"Disable Power Throttling" / "Process Count Reduction" tweaks always failing** — a double-escaped backslash in the registry path made `reg.exe` reject both commands with "invalid key name" every time
+- **Audio tweaks incomplete** — `Disable Audio Enhancements` and `Disable Exclusive Audio Lock` had no registry verification (always showed "applied, unverified") and no revert command; both added and validated against a synthetic test registry structure
+- **"Block Telemetry Hosts" not revertible** — added a revert command that removes exactly the appended hosts-file entries
+- Minor: `core/game_monitor.py` now serializes profile-apply + last-applied-profile writes with a lock to avoid overlapping file writes on rapid game switches
+- Docs: corrected stale references to the old repo name/URL and to a VBScript-based launcher description (the launcher has used PowerShell `Start-Process` since v2.0)
+
+---
+
 ## [2.1] — 2026-07-02
 
 ### New Tweaks
@@ -90,4 +102,4 @@ All notable changes to GameOptimizerPro are documented here.
 
 ---
 
-*Dates reflect development/release dates. For full commit history see [GitHub](https://github.com/FloDePin/GameOptimizerPro/commits).*
+*Dates reflect development/release dates. For full commit history see [GitHub](https://github.com/FloDePin/GameOptimizerPro-v2.1/commits).*
