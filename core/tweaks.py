@@ -223,6 +223,17 @@ $hostsFile="$env:SystemRoot\\System32\\drivers\\etc\\hosts"
 $existing=Get-Content $hostsFile
 foreach($e in $entries){if($existing -notcontains $e){Add-Content $hostsFile $e}}
 ''',
+        revert_cmd='''
+$entries=@("0.0.0.0 telemetry.microsoft.com","0.0.0.0 vortex.data.microsoft.com",
+"0.0.0.0 vortex-win.data.microsoft.com","0.0.0.0 telecommand.telemetry.microsoft.com",
+"0.0.0.0 oca.telemetry.microsoft.com","0.0.0.0 sqm.telemetry.microsoft.com",
+"0.0.0.0 watson.telemetry.microsoft.com","0.0.0.0 redir.metaservices.microsoft.com",
+"0.0.0.0 df.telemetry.microsoft.com")
+$hostsFile="$env:SystemRoot\\System32\\drivers\\etc\\hosts"
+$existing=Get-Content $hostsFile
+$filtered=$existing | Where-Object { $entries -notcontains $_ }
+Set-Content -Path $hostsFile -Value $filtered
+''',
         risk="moderate",
     ),
     Tweak(
