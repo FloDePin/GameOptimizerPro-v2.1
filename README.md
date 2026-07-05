@@ -9,6 +9,8 @@
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 [![Version](https://img.shields.io/badge/Version-2.1-red?style=flat-square)](https://github.com/FloDePin/GameOptimizerPro-v2.1/releases)
 
+🇬🇧 **English** | 🇩🇪 [Deutsch](README.de.md)
+
 *All-in-one PC optimization tool — GPU Auto-Tuner, Audio Optimization, Windows Tweaks, BIOS Guide, Per-Game Profiles and more.*
 
 </div>
