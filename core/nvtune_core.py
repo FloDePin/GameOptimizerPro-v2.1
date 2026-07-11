@@ -100,15 +100,23 @@ class ProfileManager:
         self.dir = Path(profiles_dir)
         self.dir.mkdir(parents=True, exist_ok=True)
 
+    @staticmethod
+    def _safe_name(name: str) -> str:
+        """Sanitize a profile name to a safe filename stem.
+        Used by both save() and load() so they always agree on the on-disk
+        name, and so a crafted name can't escape the profiles directory
+        (e.g. '../../evil')."""
+        return "".join(c if c.isalnum() or c in "-_ " else "_" for c in name)
+
     def save(self, profile: TuneProfile) -> str:
-        safe = "".join(c if c.isalnum() or c in "-_ " else "_" for c in profile.name)
+        safe = self._safe_name(profile.name)
         path = self.dir / f"{safe}.json"
         with open(path, "w", encoding="utf-8") as f:
             json.dump(profile.to_dict(), f, indent=2)
         return str(path)
 
     def load(self, name: str) -> Optional[TuneProfile]:
-        path = self.dir / f"{name}.json"
+        path = self.dir / f"{self._safe_name(name)}.json"
         if not path.exists():
             return None
         with open(path, "r", encoding="utf-8") as f:
@@ -125,7 +133,7 @@ class ProfileManager:
         return result
 
     def delete(self, name: str) -> bool:
-        path = self.dir / f"{name}.json"
+        path = self.dir / f"{self._safe_name(name)}.json"
         if path.exists():
             path.unlink()
             return True
@@ -414,11 +422,16 @@ class AfterburnerController:
 
         try:
             os.makedirs(self.profile_dir, exist_ok=True)
+            # Strip CR/LF so a crafted name/notes (e.g. from an imported
+            # .nextune) can't inject extra key=value lines into the .cfg
+            safe_pname = str(profile.name).replace("\r", " ").replace("\n", " ")
+            safe_notes = str(profile.notes).replace("\r", " ").replace("\n", " ")
             with open(path, "w", encoding="utf-8") as f:
-                f.write(f"; GameOptimizerPro v2.1 profile: {profile.name}\n")
-                f.write(f"; {profile.notes}\n")
+                f.write(f"; GameOptimizerPro v2.1 profile: {safe_pname}\n")
+                f.write(f"; {safe_notes}\n")
                 for k, v in existing.items():
-                    f.write(f"{k}={v}\n")
+                    line_v = str(v).replace("\r", " ").replace("\n", " ")
+                    f.write(f"{k}={line_v}\n")
         except Exception as e:
             return False, f"Write failed: {e}"
 
