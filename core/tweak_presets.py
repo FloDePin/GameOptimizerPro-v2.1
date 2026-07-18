@@ -43,6 +43,7 @@ BUILTIN_PRESETS: list[TweakPreset] = [
             "enable_hags",
             "disable_bg_throttle",
             "dx12_optimization",
+            "end_task_right_click",
         ],
     ),
 
@@ -78,6 +79,7 @@ BUILTIN_PRESETS: list[TweakPreset] = [
             "remove_copilot",
             "remove_onedrive",
             "w11_disable_widgets",
+            "disable_consumer_features",
         ],
     ),
 
@@ -93,6 +95,7 @@ BUILTIN_PRESETS: list[TweakPreset] = [
             "enable_rss",
             "dns_cloudflare",
             "flush_dns",
+            "disable_delivery_optimization",
         ],
     ),
 
@@ -110,6 +113,7 @@ BUILTIN_PRESETS: list[TweakPreset] = [
             "disable_usb_suspend",
             "timer_resolution",
             "disable_transparency",
+            "disable_hibernation",
         ],
     ),
 

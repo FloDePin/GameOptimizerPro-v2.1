@@ -357,6 +357,26 @@ VERIFY_MAP: dict[str, str] = {
         '-Name BingSearchEnabled -EA SilentlyContinue).BingSearchEnabled; '
         'if($v -eq 0){"1"}else{"0"}'
     ),
+    "disable_consumer_features": (
+        '$v=(Get-ItemProperty "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\CloudContent" '
+        '-Name DisableWindowsConsumerFeatures -EA SilentlyContinue).DisableWindowsConsumerFeatures; '
+        'if($v -eq 1){"1"}else{"0"}'
+    ),
+    "disable_hibernation": (
+        '$v=(Get-ItemProperty "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Power" '
+        '-Name HibernateEnabled -EA SilentlyContinue).HibernateEnabled; '
+        'if($v -eq 0){"1"}else{"0"}'
+    ),
+    "end_task_right_click": (
+        '$v=(Get-ItemProperty "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced\\TaskbarDeveloperSettings" '
+        '-Name TaskbarEndTask -EA SilentlyContinue).TaskbarEndTask; '
+        'if($v -eq 1){"1"}else{"0"}'
+    ),
+    "disable_delivery_optimization": (
+        '$v=(Get-ItemProperty "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeliveryOptimization" '
+        '-Name DODownloadMode -EA SilentlyContinue).DODownloadMode; '
+        'if($v -eq 0){"1"}else{"0"}'
+    ),
 }
 
 
@@ -377,8 +397,13 @@ class TweakVerifier:
         lines = []
         for tid in ids:
             cmd = VERIFY_MAP[tid].strip()
+            # NOTE: $(...) subexpression — NOT (...). A grouping expression
+            # (...) only accepts a single pipeline, so any verify command
+            # written as two statements ("$v=...; if(...){}") fails to parse
+            # and silently returns no output (amber dot). $(...) allows the
+            # multi-statement form used by most registry checks.
             lines.append(
-                f'try {{ $__r=({cmd}); Write-Output "{tid}|$__r" }}'
+                f'try {{ $__r=$({cmd}); Write-Output "{tid}|$__r" }}'
                 f' catch {{ Write-Output "{tid}|0" }}'
             )
         script = "\n".join(lines)

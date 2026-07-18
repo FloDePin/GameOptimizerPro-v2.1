@@ -120,6 +120,16 @@ $bloat=@("*king.com*","*Facebook*","*Spotify*","*Disney*","*TikTok*","*Instagram
 foreach($a in $bloat){Get-AppxPackage -AllUsers $a|Remove-AppxPackage -ErrorAction SilentlyContinue}
 ''',
     ),
+    Tweak(
+        id="disable_consumer_features",
+        name="Disable Consumer Features",
+        desc="Verhindert dass Windows automatisch vorgeschlagene Apps und Bloatware nachinstalliert "
+             "(Candy Crush & Co. tauchen sonst nach Updates wieder auf). Reine Richtlinie, keine Deinstallation.",
+        category="Windows", group="Bloatware",
+        ps_command='reg add "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\CloudContent" /v DisableWindowsConsumerFeatures /t REG_DWORD /d 1 /f',
+        revert_cmd='reg delete "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\CloudContent" /v DisableWindowsConsumerFeatures /f 2>$null',
+        risk="safe",
+    ),
 
     # ══════════════════════════════════════════════════════════════
     # WINDOWS — PRIVACY
@@ -340,6 +350,17 @@ Set-Service WSearch -StartupType Automatic -ErrorAction SilentlyContinue
 Start-Service WSearch -ErrorAction SilentlyContinue
 ''',
     ),
+    Tweak(
+        id="disable_hibernation",
+        name="Disable Hibernation",
+        desc="Deaktiviert den Ruhezustand und löscht die hiberfil.sys (belegt sonst RAM-Größe auf der SSD, "
+             "z.B. 32 GB). Schaltet auch das oft fehleranfällige Fast-Startup ab. Auf Desktop-Gaming-PCs unkritisch.",
+        category="Windows", group="Performance",
+        requires_reboot=True,
+        ps_command='powercfg /hibernate off',
+        revert_cmd='powercfg /hibernate on',
+        risk="safe",
+    ),
 
     # ══════════════════════════════════════════════════════════════
     # WINDOWS — MOUSE & UI
@@ -393,6 +414,16 @@ reg add "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize
         category="Windows", group="Mouse & UI",
         ps_command='reg add "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize" /v EnableTransparency /t REG_DWORD /d 0 /f',
         revert_cmd='reg add "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize" /v EnableTransparency /t REG_DWORD /d 1 /f',
+    ),
+    Tweak(
+        id="end_task_right_click",
+        name="End Task per Rechtsklick (Taskleiste)",
+        desc="Fügt der Taskleisten-Rechtsklick den Eintrag 'Task beenden' hinzu — ein eingefrorenes Spiel "
+             "lässt sich damit sofort killen, ohne den Task-Manager zu öffnen. Windows 11 22H2+.",
+        category="Windows", group="Mouse & UI",
+        ps_command='reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced\\TaskbarDeveloperSettings" /v TaskbarEndTask /t REG_DWORD /d 1 /f',
+        revert_cmd='reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced\\TaskbarDeveloperSettings" /v TaskbarEndTask /t REG_DWORD /d 0 /f',
+        risk="safe",
     ),
 
     # ══════════════════════════════════════════════════════════════
@@ -606,6 +637,16 @@ reg add "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\Syst
 reg add "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile" /v NetworkThrottlingIndex /t REG_DWORD /d 10 /f
 reg add "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile" /v SystemResponsiveness /t REG_DWORD /d 20 /f
 ''',
+    ),
+    Tweak(
+        id="disable_delivery_optimization",
+        name="Disable Delivery Optimization (P2P Updates)",
+        desc="Schaltet das Peer-to-Peer-Teilen von Windows-Updates ab, das sonst im Hintergrund Upload- und "
+             "Download-Bandbreite frisst — spürbar für stabilere Pings beim Online-Gaming. Reine Richtlinie.",
+        category="Network", group="Latency",
+        ps_command='reg add "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeliveryOptimization" /v DODownloadMode /t REG_DWORD /d 0 /f',
+        revert_cmd='reg delete "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeliveryOptimization" /v DODownloadMode /f 2>$null',
+        risk="safe",
     ),
 
     # ══════════════════════════════════════════════════════════════

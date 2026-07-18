@@ -125,11 +125,19 @@ TWEAK_DESC_EN: dict[str, str] = {
         "Sets the Svchost split threshold to your RAM size so Windows bundles services into fewer processes. Lowers the total background process count. Safe with 16GB+ RAM.",
     "disable_bing_search":
         "Disables Bing web integration in Windows Search. Start menu search stays local and loads faster.",
+    "disable_consumer_features":
+        "Stops Windows from auto-installing suggested apps and bloatware (Candy Crush & co. reappear after updates otherwise). Policy only, no uninstall.",
+    "disable_hibernation":
+        "Disables hibernation and deletes hiberfil.sys (otherwise uses RAM-size on the SSD, e.g. 32 GB). Also turns off the often flaky Fast Startup. Safe on desktop gaming PCs.",
+    "end_task_right_click":
+        "Adds 'End Task' to the taskbar right-click menu — kill a frozen game instantly without opening Task Manager. Windows 11 22H2+.",
+    "disable_delivery_optimization":
+        "Turns off peer-to-peer sharing of Windows updates, which otherwise eats upload/download bandwidth in the background — noticeably steadier pings for online gaming. Policy only.",
 }
 
 # English names, only where the German name differs. Most names are already English.
 TWEAK_NAME_EN: dict[str, str] = {
-    # names are already English in the database; kept for future overrides
+    "end_task_right_click": "End Task via Right-Click (Taskbar)",
 }
 
 
