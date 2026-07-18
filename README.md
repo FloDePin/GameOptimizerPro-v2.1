@@ -1,13 +1,13 @@
 <div align="center">
 
-# ⚡ GameOptimizerPro v2.1
+# ⚡ GameOptimizerPro v2.1.1
 
-**Windows & Gaming Optimizer v2.1 by FloDePin**
+**Windows & Gaming Optimizer v2.1.1 by FloDePin**
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=flat-square&logo=python)](https://python.org)
 [![Windows](https://img.shields.io/badge/Windows-10%2F11-0078D4?style=flat-square&logo=windows)](https://microsoft.com/windows)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-2.1-red?style=flat-square)](https://github.com/FloDePin/GameOptimizerPro-v2.1/releases)
+[![Version](https://img.shields.io/badge/Version-2.1.1-red?style=flat-square)](https://github.com/FloDePin/GameOptimizerPro-v2.1/releases)
 
 🇬🇧 **English** | 🇩🇪 [Deutsch](README.de.md)
 
@@ -35,14 +35,16 @@
 - **Audio Ducking Control** — prevent Discord/music from being muted by games
 - **Windows Audio Enhancement Removal** — reduces audio latency and CPU overhead
 - All audio tweaks integrated into **Windows Optimizer** for easy on/off control
+- ✨ **NEW in v2.1.1:** Full verification & revert support for all audio tweaks
 
 ### 🛠 Windows Optimizer
-- **50+ Tweaks** across Windows, Gaming, Network, Audio categories
+- **55+ Tweaks** across Windows, Gaming, Network, Audio categories
 - Live status verification — reads actual Registry/Service state (not just JSON)
 - 3-state indicators: ● Green (verified active) / ◑ Amber (applied, unverified) / ○ Grey (inactive)
 - **7 built-in Presets:** Gaming, Privacy & Anti-Telemetry, Debloat, Network, Performance, Windows 11 Classic, All Safe Tweaks
 - Export / Import settings as `.nextune` files
 - Tooltips (hover `?`) on every single tweak
+- ✨ **NEW in v2.1.1:** 4 powerful new tweaks for gaming & system optimization
 
 ### 🖥 BIOS Guide
 - Hardware-aware recommendations (auto-detects CPU, GPU, Motherboard)
@@ -76,6 +78,28 @@
 - Separate window listing all autostart entries from Registry
 - Status for each entry: Safe ✓ / Caution ⚠ / System ⚙ / Unknown ?
 - 40+ pre-classified known processes (Discord, Steam, Corsair, NVIDIA, etc.)
+
+---
+
+## 🆕 What's New in v2.1.1
+
+### 🐛 Bug Fixes
+- **Launcher window now visible** — Fixed PowerShell `-WindowStyle Hidden` flag that was hiding the main window
+- **Registry tweaks working** — Fixed double-backslash escaping bug in "Disable Power Throttling" & "Process Count Reduction"
+- **Audio tweaks fully verified** — "Disable Audio Enhancements" & "Disable Exclusive Audio Lock" now have complete status verification & revert commands
+- **Telemetry blocking reversible** — "Block Telemetry Hosts" now has proper revert that safely removes appended entries
+- **Rapid game switching stable** — Fixed file write race condition in game profile manager with proper locking
+
+### 🎯 New Tweaks Added (4 total)
+1. **Disable Consumer Features** — Stops Windows from auto-installing suggested apps & bloatware (Candy Crush, etc. after updates)
+2. **Disable Hibernation** — Saves ~RAM size on SSD (e.g., 32 GB) + disables flaky Fast Startup
+3. **End Task via Right-Click** — Kill frozen games instantly from taskbar (Windows 11 22H2+)
+4. **Disable Delivery Optimization** — Disables P2P Windows update sharing for steadier gaming pings
+
+### 📚 Documentation & CI
+- Added complete German README (`README.de.md`)
+- Added GitHub Actions CI workflow for syntax checking & registry path validation
+- Corrected stale URL references from old repo name
 
 ---
 
@@ -129,11 +153,12 @@ Double-click **`GameOptimizerPro.bat`**
 
 ## 🚀 First Steps
 
-1. Open **[WIN] Optimizer** → click **"⟳ Check Status"** to see which tweaks are already active
+1. Open **[WIN] Optimizer** → click **"⟳ Check Status"** to see which tweaks are already active (green ● = active, amber ◑ = needs verification)
 2. Apply the **🎮 Gaming Preset** for a quick all-in-one optimization
-3. Find **Audio tweaks** in **[WIN] Optimizer** (category: Audio) — enable low-latency audio tweaks
-4. Check **[BIOS] BIOS Guide** — it detects your hardware and shows what to change
-5. If you have Afterburner running, try the **[GPU] GPU Tuner** → Start Tune (OC+UV recommended)
+3. Find **Audio tweaks** in **[WIN] Optimizer** (category: Audio) — enable low-latency audio tweaks for gaming
+4. Try **[WIN] Optimizer** → **Performance Preset** if you want maximum system performance
+5. Check **[BIOS] BIOS Guide** — it detects your hardware and shows what to change
+6. If you have Afterburner running, try the **[GPU] GPU Tuner** → Start Tune (OC+UV recommended)
 
 ---
 
@@ -145,19 +170,23 @@ GameOptimizerPro/
 ├── GameOptimizerPro.bat      ← Launcher (PowerShell Start-Process, hidden, UAC)
 ├── install.bat               ← Dependency installer
 ├── _stress_worker.py         ← GPU stress test subprocess
+├── requirements.txt          ← Python dependencies
+├── .github/
+│   └── workflows/
+│       └── ci.yml            ← GitHub Actions CI (syntax & registry checks)
 ├── core/
 │   ├── nvtune_core.py        ← GPU monitor (NVML + MAHM), Afterburner controller
 │   ├── nvtune_tuner.py       ← Auto-tuner (Stage 1 OC, Stage 2 UV, TDR detection)
 │   ├── vf_curve.py           ← Voltage-frequency curve optimization
 │   ├── hardware.py           ← WMI hardware detection
-│   ├── tweaks.py             ← 50+ tweaks database (Windows, Gaming, Network, Audio)
+│   ├── tweaks.py             ← 55+ tweaks database (Windows, Gaming, Network, Audio)
 │   ├── tweak_runner.py       ← PowerShell executor (hidden)
 │   ├── tweak_verifier.py     ← Registry verification (100% coverage)
 │   ├── tweak_presets.py      ← 7 built-in presets
 │   ├── tweak_i18n.py         ← Multilingual tweak descriptions (EN/DE)
 │   ├── bios_guide.py         ← BIOS recommendations database
 │   ├── bios_detector.py      ← Live BIOS state detection
-│   ├── game_monitor.py       ← Per-game profile monitor (psutil)
+│   ├── game_monitor.py       ← Per-game profile monitor (psutil, thread-safe)
 │   ├── crash_recovery.py     ← TDR detection, crash flag system
 │   ├── temp_monitor.py       ← GPU temp toast notifications
 │   ├── update_checker.py     ← GitHub releases API
@@ -192,7 +221,7 @@ Thread 2      → pystray.run() — system tray icon
 Thread 3      → GPU stats loop (4s interval)
 Thread 4      → Startup (crash check + profile load)
 Thread 5      → Menu refresh (20s interval)
-Thread 6      → Game process monitor (3s interval, psutil)
+Thread 6      → Game process monitor (3s interval, psutil) — thread-safe with locks
 Thread 7      → Temperature monitor (10s interval)
 Thread 8+     → Auto-tune stages, stress worker subprocess
 ```
@@ -209,6 +238,8 @@ Cross-thread communication uses `widget.after(0, callback)` — the only safe wa
 - **Crash recovery** — TDR detection automatically resets GPU to safe settings
 - **Admin rights** are requested via UAC, not baked in
 - **Audio tweaks are reversible** — all changes can be undone with "Revert"
+- **Profile injection protection** — names & notes sanitized to prevent registry injection
+- **Hosts file safe revert** — telemetry entries removed precisely, no data loss
 
 ---
 
